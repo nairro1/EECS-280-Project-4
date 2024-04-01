@@ -170,7 +170,7 @@ TEST(test_down) {
   ASSERT_EQUAL(buffer.get_row(), 2);
   ASSERT_EQUAL(buffer.get_column(), 5);
 }
-/*
+
 TEST(test_is_at_end) {
   TextBuffer buffer;
   ASSERT_TRUE(buffer.is_at_end());
@@ -192,6 +192,5 @@ TEST(test_stringify) {
   ASSERT_EQUAL(buffer.stringify(), "efg\nhijk\n");
   ASSERT_EQUAL(buffer.get_index(),9);
 }
-*/
 
 TEST_MAIN()

@@ -22,7 +22,6 @@ bool TextBuffer::forward()
     return false;
 }
 
-/*
 bool TextBuffer::backward()
 {
     if (cursor != data.begin())
@@ -38,33 +37,6 @@ bool TextBuffer::backward()
         {
             --column;
         }
-        return true;
-    }
-    return false;
-}
-*/
-bool TextBuffer::backward() {
-    if (cursor != data.begin()) {
-        // Save the current cursor position
-        auto temp = cursor;
-        
-        // Move the cursor one character backward
-        --temp;
-        
-        // Check if the character at the new cursor position is a newline
-        if (*temp == '\n') {
-            // Update row and column
-            --row;
-            column = compute_column();
-        } else {
-            // Update column
-            --column;
-        }
-
-        // Update cursor and index
-        cursor = temp;
-        --index;
-
         return true;
     }
     return false;
@@ -93,27 +65,26 @@ void TextBuffer::insert(char c)
     }
 }
 
-bool TextBuffer::remove() {
-    if (cursor != data.end()) {
-        auto temp = cursor; // Save current cursor position
-        
-        // Move cursor to the next character
-        ++temp;
-        
-        // Check if the next character is a newline
-        if (*temp == '\n') {
-            --row; // Decrement row
-            column = compute_column(); // Update column
-        } else {
-            --column; // Decrement column
+bool TextBuffer::remove()
+{
+    if (cursor != data.end())
+    {
+        if (*cursor == '\n')
+        {
+            --row;
+            column = compute_column();
         }
-        
-        // Erase the character at the cursor position
+        else
+        {
+            // Update the column only if not at the start of the line
+            if (cursor != data.begin())
+            {
+                --column;
+            }
+        }
         cursor = data.erase(cursor);
-        
-        // Update index after removal
+        // Update the index after removal
         index = std::distance(data.begin(), cursor);
-        
         return true;
     }
     return false;

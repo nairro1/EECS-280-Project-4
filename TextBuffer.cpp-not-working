@@ -1,5 +1,11 @@
 #include "TextBuffer.hpp"
 
+/*TextBuffer::TextBuffer() : row(1), column(0), index(0)
+{
+    cursor = data.begin(); // cursor at the beginning (past-the-end)
+}
+*/
+
 TextBuffer::TextBuffer() : cursor(data.end()), row(1), column(0), index(0) {}
 
 bool TextBuffer::forward()
@@ -10,9 +16,7 @@ bool TextBuffer::forward()
         {
             ++row;
             column = 0;
-        } 
-        else
-        {
+        } else {
             ++column;
         }
         ++cursor;
@@ -22,7 +26,6 @@ bool TextBuffer::forward()
     return false;
 }
 
-/*
 bool TextBuffer::backward()
 {
     if (cursor != data.begin())
@@ -33,91 +36,73 @@ bool TextBuffer::backward()
         {
             --row;
             column = compute_column();
-        } 
+        }
         else
         {
             --column;
         }
+        return true;
+    }
+    return false;
+}
+
+bool TextBuffer::remove()
+{
+    if (cursor != data.end())
+    {
+        if (*cursor == '\n')
+        {
+            --row;
+            column = compute_column();
+        }
+        else
+        {
+            // Update the column only if not at the start of the line
+            if (cursor != data.begin())
+            {
+                --column;
+            }
+        }
+        cursor = data.erase(cursor);
+        // Update the index after removal
+        index = std::distance(data.begin(), cursor);
+        return true;
+    }
+    return false;
+}
+
+/*
+bool TextBuffer::remove()
+{
+    if (cursor != data.end())
+    {
+        if (*cursor == '\n')
+        {
+            // If the character at the cursor is a newline
+            --row;
+            if (cursor != data.begin()) {
+                // If not at the start of the line, move cursor back to calculate column
+                --cursor;
+            }
+            column = compute_column();
+        }
+        else
+        {
+            // If the character at the cursor is not a newline
+            if (cursor != data.begin())
+            {
+                // If not at the start of the line, decrement column
+                --column;
+            }
+        }
+        // Erase the character at the cursor position and update cursor and index
+        cursor = data.erase(cursor);
+        index = std::distance(data.begin(), cursor);
         return true;
     }
     return false;
 }
 */
-bool TextBuffer::backward() {
-    if (cursor != data.begin()) {
-        // Save the current cursor position
-        auto temp = cursor;
-        
-        // Move the cursor one character backward
-        --temp;
-        
-        // Check if the character at the new cursor position is a newline
-        if (*temp == '\n') {
-            // Update row and column
-            --row;
-            column = compute_column();
-        } else {
-            // Update column
-            --column;
-        }
-
-        // Update cursor and index
-        cursor = temp;
-        --index;
-
-        return true;
-    }
-    return false;
-}
-
-void TextBuffer::insert(char c)
-{
-    if (cursor != data.end() && c != '\n')
-    {
-        data.insert(cursor, c);
-        ++index;
-        ++column;
-    }
-    else
-    {
-        data.insert(cursor, c);
-        if (c == '\n')
-        {
-            ++row;
-            column = 0;
-        } 
-        else
-        {
-            ++column;
-        }
-    }
-}
-
-bool TextBuffer::remove() {
-    if (cursor != data.end()) {
-        auto temp = cursor; // Save current cursor position
-        
-        // Move cursor to the next character
-        ++temp;
-        
-        // Check if the next character is a newline
-        if (*temp == '\n') {
-            --row; // Decrement row
-            column = compute_column(); // Update column
-        } else {
-            --column; // Decrement column
-        }
-        
-        // Erase the character at the cursor position
-        cursor = data.erase(cursor);
-        
-        // Update index after removal
-        index = std::distance(data.begin(), cursor);
-        
-        return true;
-    }
-    return false;
-}
 
 void TextBuffer::move_to_row_start()
 {
@@ -215,6 +200,7 @@ bool TextBuffer::up()
     return false;
 }
 
+/*
 bool TextBuffer::down()
 {
     if (cursor == data.end())
@@ -230,10 +216,11 @@ bool TextBuffer::down()
     while (temp != data.end() && *temp != '\n')
     {
         ++temp;
+        std::cout << "Cursor Line x" << std::endl;
     }
 
     // Debug output
-    std::cout << "Row before moving down: " << row << std::endl;
+    std::cout << "Row before moving down: " << row << " column : " << &temp << std::endl;
 
     // If not already at the last row
     if (temp != data.end())
@@ -249,22 +236,53 @@ bool TextBuffer::down()
         column = compute_column();
 
         // Debug output
-        std::cout << "Row after moving down: " << row << std::endl;
+        std::cout << "Row after moving down - Not end: " << row << std::endl;
 
         return true;
-    }
+    } 
     else
     {
         // If already at the last row, move cursor to the end
         cursor = temp;
         // Update the index
         index = std::distance(data.begin(), cursor);
-
+    
         // Debug output
-        std::cout << "Row after moving down: " << row << std::endl;
+        std::cout << "Row after moving down - end: " << row << std::endl;
 
         return true;
     }
+}
+*/
+
+bool TextBuffer::down() {
+    Iterator original_cursor = cursor;
+    int original_row = row;
+    move_to_row_end();
+    if (original_row < row)
+    {
+        // Traverse the list to find the newline character
+        while (cursor != data.end() && *cursor != '\n')
+        {
+            ++cursor;
+            ++index;
+            ++column;
+        }
+
+        // Calculate the current column based on the original cursor position
+        int current_column = (cursor != data.end()) ? std::distance(data.begin(), cursor) - std::distance(data.begin(), original_cursor) : compute_column();
+
+        // Move cursor to the start of the original row
+        move_to_row_start();
+        for (int i = 1; i < original_row; ++i)
+            forward();
+        
+        // Move cursor to the calculated column
+        move_to_column(current_column);
+
+        return true;
+    }
+    return false;
 }
 
 bool TextBuffer::is_at_end() const
