@@ -55,6 +55,7 @@ TEST(test_pop_back) {
 }
 
 TEST(test_assignment_operator) {
+    // Test assignment operator on lists with the same type
     List<int> list1;
     list1.push_back(1);
     list1.push_back(2);
@@ -63,21 +64,24 @@ TEST(test_assignment_operator) {
     list2.push_back(3);
     list2.push_back(4);
 
-    // Perform assignment
-    list2 = list1; // Test assignment operator
+    list2 = list1; // Perform assignment
 
-    // Verify size is equal
-    ASSERT_EQUAL(list1.size(), list2.size());
+    ASSERT_EQUAL(list1.size(), list2.size()); // Verify size is equal
 
-    // Verify elements are equal
     auto it1 = list1.begin();
     auto it2 = list2.begin();
     while (it1 != list1.end() && it2 != list2.end()) {
-        ASSERT_EQUAL(*it1, *it2);
+        ASSERT_EQUAL(*it1, *it2); // Verify elements are equal
         ++it1;
         ++it2;
     }
 }
+
+
+
+
+
+ //have a test case checking for different data types
 
 TEST(test_clear) {
     List<int> my_list;
@@ -126,5 +130,26 @@ TEST(test_iterator) {
 }
 
 // Add more test cases as needed to cover other functions and edge cases
+TEST(test_different_data_types) {
+    // Create a list with int data type
+    List<int> intList;
+    intList.push_back(1);
+    intList.push_back(2);
+
+    // Create a list with char data type
+    List<char> charList;
+    charList.push_back('a');
+    charList.push_back('b');
+
+    // Perform assignment with the same data type
+    charList = charList; // Test assignment operator with the same data type
+    ASSERT_EQUAL(charList.size(), 2); // Verify size remains the same
+
+    // Perform assignment with different data type (This will fail)
+   // charList = intList; // Test assignment operator with different data type
+}
+
+
+
 
 TEST_MAIN()
