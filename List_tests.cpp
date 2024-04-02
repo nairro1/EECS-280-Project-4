@@ -77,10 +77,6 @@ TEST(test_assignment_operator) {
     }
 }
 
-
-
-
-
  //have a test case checking for different data types
 
 TEST(test_clear) {
@@ -148,6 +144,171 @@ TEST(test_different_data_types) {
     // Perform assignment with different data type (This will fail)
    // charList = intList; // Test assignment operator with different data type
 }
+
+
+TEST(test_copy_constructor) {
+    // Create a list and insert elements
+    List<int> originalList;
+    originalList.push_back(1);
+    originalList.push_back(2);
+    originalList.push_back(3);
+
+    // Create a new list using the copy constructor
+    List<int> copiedList(originalList);
+
+    // Verify that the copied list contains the same elements as the original list
+    auto it1 = originalList.begin();
+    auto it2 = copiedList.begin();
+    while (it1 != originalList.end() && it2 != copiedList.end()) {
+        ASSERT_EQUAL(*it1, *it2); // Verify elements are equal
+        ++it1;
+        ++it2;
+    }
+
+    // Verify that the size of the copied list is the same as the original list
+    ASSERT_EQUAL(originalList.size(), copiedList.size());
+
+    // Optionally, verify that the size of the copied list matches the expected size
+    ASSERT_EQUAL(copiedList.size(), 3); // Assuming the original list has 3 elements
+
+    // Optionally, verify that a traversal of both lists yields the same elements
+    // (this check is already done inside the while loop above)
+}
+
+
+TEST(test_other_functions) {
+    // Test the clear function
+    List<int> my_list;
+    my_list.push_back(1);
+    my_list.push_back(2);
+    my_list.clear();
+    ASSERT_TRUE(my_list.empty());
+    ASSERT_EQUAL(my_list.size(), 0);
+
+    // Test the erase function
+    List<int> eraseList;
+    eraseList.push_back(1);
+    eraseList.push_back(2);
+    eraseList.push_back(3);
+    eraseList.erase(eraseList.begin()); // Erase the first element
+    ASSERT_EQUAL(eraseList.size(), 2);
+    ASSERT_EQUAL(eraseList.front(), 2);
+
+    // Test the insert function
+    List<int> insertList;
+    insertList.push_back(1);
+    insertList.push_back(3);
+    auto it = insertList.begin();
+    insertList.insert(++it, 2); // Insert 2 between 1 and 3
+    ASSERT_EQUAL(insertList.size(), 3);
+    ASSERT_EQUAL(insertList.front(), 1);
+    ASSERT_EQUAL(insertList.back(), 3);
+}
+
+TEST(test_empty_list_copy_constructor) {
+    List<int> emptyList;
+    List<int> copiedList(emptyList);
+    ASSERT_TRUE(copiedList.empty());
+    ASSERT_EQUAL(copiedList.size(), 0);
+}
+
+
+TEST(test_single_element_list_copy_constructor) {
+    List<int> singleElementList;
+    singleElementList.push_back(42);
+    List<int> copiedList(singleElementList);
+    ASSERT_FALSE(copiedList.empty());
+    ASSERT_EQUAL(copiedList.size(), 1);
+    ASSERT_EQUAL(copiedList.front(), 42);
+}
+
+TEST(test_assignment_operator_self_assignment) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list = list; // Perform self-assignment
+    ASSERT_EQUAL(list.size(), 2);
+    ASSERT_EQUAL(list.front(), 1);
+    ASSERT_EQUAL(list.back(), 2);
+}
+
+TEST(test_erase_function) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+    list.erase(list.begin()); // Erase the first element
+    ASSERT_EQUAL(list.size(), 2);
+    ASSERT_EQUAL(list.front(), 2);
+}
+
+TEST(test_insert_function) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(3);
+    auto it = list.begin();
+    auto new_it = list.insert(++it, 2); // Insert 2 between 1 and 3
+    ASSERT_EQUAL(list.size(), 3);
+    ASSERT_EQUAL(list.front(), 1);
+    ASSERT_EQUAL(*new_it, 2); // Check the value of the new iterator returned by insert
+    ASSERT_EQUAL(list.back(), 3);
+}
+
+
+
+TEST(test_iterator_decrement_operator) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    auto it = list.end(); // End iterator
+    --it;
+    ASSERT_EQUAL(*it, 2);
+}
+
+
+TEST(test_iterator_increment_operator) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    auto it = list.begin();
+    ++it;
+    ASSERT_EQUAL(*it, 2);
+}
+
+
+TEST(test_iterator_equality_and_inequality) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    auto it1 = list.begin();
+    auto it2 = list.begin();
+    ++it2;
+    ASSERT_TRUE(it1 == it1);
+    ASSERT_FALSE(it1 != it1);
+    ASSERT_TRUE(it1 != it2);
+    ASSERT_FALSE(it1 == it2);
+}
+
+TEST(test_erase_last_element) {
+    List<int> my_list;
+    my_list.push_back(1);
+    my_list.push_back(2);
+    my_list.push_back(3);
+    my_list.erase(--my_list.end()); // Erase the last element
+    ASSERT_EQUAL(my_list.size(), 2);
+    ASSERT_EQUAL(my_list.back(), 2);
+}
+
+TEST(test_insert_beginning) {
+    List<int> my_list;
+    my_list.push_back(2);
+    my_list.push_back(3);
+    auto it = my_list.begin();
+    my_list.insert(it, 1); // Insert 1 at the beginning
+    ASSERT_EQUAL(my_list.size(), 3);
+    ASSERT_EQUAL(my_list.front(), 1);
+}
+
 
 
 

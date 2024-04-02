@@ -30,15 +30,20 @@ public:
     List() : first(nullptr), last(nullptr) {}
     ~List() { clear(); }
     List(const List<T>& other) : first(nullptr), last(nullptr) { copy_all(other); }
-    List<T>& operator=(const List<T>& rhs)
-    {
-        if (this != &rhs)
-        {
-            clear();
-            copy_all(rhs);
-        }
-        return *this;
+
+     List<T>& operator=(const List<T>& rhs) {
+    if (this != &rhs) {
+        // Clear the current list
+        clear();
+        
+        // Copy all elements from rhs to this list
+        copy_all(rhs);
     }
+    return *this;
+}
+
+
+      
 
     //EFFECTS:  returns true if the list is empty
     bool empty() const

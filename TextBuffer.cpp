@@ -22,27 +22,6 @@ bool TextBuffer::forward()
     return false;
 }
 
-/*
-bool TextBuffer::backward()
-{
-    if (cursor != data.begin())
-    {
-        --cursor;
-        --index;
-        if (*cursor == '\n')
-        {
-            --row;
-            column = compute_column();
-        } 
-        else
-        {
-            --column;
-        }
-        return true;
-    }
-    return false;
-}
-*/
 bool TextBuffer::backward() {
     if (cursor != data.begin()) {
         // Save the current cursor position
@@ -93,7 +72,8 @@ void TextBuffer::insert(char c)
     }
 }
 
-bool TextBuffer::remove() {
+bool TextBuffer::remove()
+{
     if (cursor != data.end()) {
         auto temp = cursor; // Save current cursor position
         
@@ -104,11 +84,7 @@ bool TextBuffer::remove() {
         if (*temp == '\n') {
             --row; // Decrement row
             column = compute_column(); // Update column
-        } else {
-            --column; // Decrement column
         }
-        
-        // Erase the character at the cursor position
         cursor = data.erase(cursor);
         
         // Update index after removal
@@ -181,6 +157,7 @@ void TextBuffer::move_to_column(int new_column)
 
 bool TextBuffer::up()
 {
+    
     if (cursor == data.begin() && get_row() == 1)
     {
         // Cursor is already at the start of the buffer
@@ -208,7 +185,9 @@ bool TextBuffer::up()
         --row;
         // Update the column position
         column = compute_column();
+
         return true;
+
     }
 
     // If cursor is already at the first row, return false
@@ -231,9 +210,7 @@ bool TextBuffer::down()
     {
         ++temp;
     }
-
-    // Debug output
-    std::cout << "Row before moving down: " << row << std::endl;
+    ++temp;++temp;++temp;
 
     // If not already at the last row
     if (temp != data.end())
@@ -241,15 +218,12 @@ bool TextBuffer::down()
         // Move cursor to the character after the newline
         ++temp;
         cursor = temp;
+
         // Update the index
         index = std::distance(data.begin(), cursor);
-        // Increment the row
-        ++row;
+
         // Update the column position
         column = compute_column();
-
-        // Debug output
-        std::cout << "Row after moving down: " << row << std::endl;
 
         return true;
     }
@@ -259,13 +233,11 @@ bool TextBuffer::down()
         cursor = temp;
         // Update the index
         index = std::distance(data.begin(), cursor);
-
-        // Debug output
-        std::cout << "Row after moving down: " << row << std::endl;
-
+       
         return true;
     }
 }
+
 
 bool TextBuffer::is_at_end() const
 {
@@ -291,9 +263,10 @@ int TextBuffer::get_column() const
     return column;
 }
 
-int TextBuffer::get_index() const
-{
-    return index;
+int TextBuffer::get_index() const {
+    using const_iterator = decltype(data.begin()); // Define const_iterator type
+    const_iterator constCursor = cursor; // Cast cursor to const_iterator
+    return std::distance(data.begin(), constCursor);
 }
 
 int TextBuffer::size() const
@@ -308,12 +281,13 @@ std::string TextBuffer::stringify() const
     {
         result += *it;
     }
+
     return result;
 }
 
 int TextBuffer::compute_column() const
 {
-    int count = 0;
+    int count = 1; //changed from 0 to 1
     Iterator it = cursor;
     while (it != data.begin() && *it != '\n')
     {
